@@ -1,0 +1,20 @@
+{
+  "name": "my-web",
+  "version": "1.0.0",
+  "main" :"server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "md5": "^2.2.1",
+    "mongoose": "^5.4.0",
+    "session-file-store": "^1.2.0"
+  },
+  "devDependencies": {
+    "concurrently": "^4.0.1"
+  }
+}
