@@ -14,7 +14,6 @@ import Home from './Home';
 import Designers from './Designers';
 import Bags from './Bags';
 import Shoes from './Shoes';
-import Accessories from './Accessories';
 import ProductDetails from './ProductDetails';
 import ProductsByDesigner from './ProductsByDesigner';
 import Checkout from './Checkout';
@@ -23,25 +22,43 @@ import Checkout from './Checkout';
 export default class Header extends Component {
     constructor(props) {
         super(props);
+        this.state={
+          "isLoggedin": false,
+          "username": ""
+        }
         console.log(localStorage);
+        console.log(this.state);
+        //Check whether user logs in
+        fetch('checkLogin',{
+          method: 'get',
+          headers: {"Content-Type":"application/json"}
+        })
+        .then(response=>response.json())
+        .then(responseJson=>{
+          console.log(responseJson)
 
-        if (localStorage.username != null && localStorage.username.length > 0 ){
-            
-            this.state = {
+          if (responseJson.err_code == 0){
+            this.setState({
                 // if user has loggin in, set username to State
                 "isLoggedin": true,
                 "username": "Welcome,"+localStorage.username
-            }  
-        }else{
-            this.state = {
+              }) 
+              console.log(this.state);
+            }else{
+            this.setState({
                 //if user has not logged in, set username to empty
                 "isLoggedin": false,
                 "username": ""
+              }) 
+              console.log(this.state);
             }
-        }
-}
+            console.log(this.state)
+        })
+
+     }
 
 
+   // Only user who logs in can view his shoppingcart.
    handleShoppingCart(){
     if (localStorage.username.trim().length === 0){
         alert("Please login to browse your shopping cart.");
@@ -51,6 +68,7 @@ export default class Header extends Component {
    }
     
 
+    // Clear user session and localstorage whe user logs out. 
     handleLogOut(){
       fetch('clearSession',{
             method:'delete',
@@ -67,6 +85,9 @@ export default class Header extends Component {
       
     }
 
+
+
+   // Handle changes of Login and Logout button according to user status. 
     switchButton(){
       if (this.state.isLoggedin){
           return(
@@ -116,30 +137,24 @@ export default class Header extends Component {
           <NavItem>
             <NavLink className="text-dark" href="/Designers">Designers</NavLink>
           </NavItem>
-          <NavItem>
-            <NavLink className="text-dark" href="/Bags">Bages</NavLink>
-          </NavItem>
-          <NavItem>
+           <NavItem>
             <NavLink className="text-dark" href="/Shoes">Shoes</NavLink>
           </NavItem>
           <NavItem>
-            <NavLink className="text-dark" href="/Accessories">Accessories</NavLink>
-          </NavItem>
+            <NavLink className="text-dark" href="/Bags">Bages</NavLink>
+          </NavItem>          
 
           </Nav>
   </div>
  
 
-
-
-
+  {/* Set routes and their corresponding components. */}
   <Router>  
       <div>
       <Route exact path="/" component={Home} />
       <Route exact path="/Designers" component={Designers} />
       <Route exact path="/Bags" component={Bags} />
       <Route exact path="/Shoes" component={Shoes} />
-      <Route exact path="/Accessories" component={Accessories} />
       <Route path="/Login" component={Login} />
       <Route path="/Signup" component={Signup} />
       <Route path="/Shoppingcart" component={Shoppingcart} />

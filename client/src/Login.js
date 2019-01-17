@@ -8,27 +8,27 @@ export default class Login extends Component {
         this.state = {
             "username": "",
             "password": "",
-            isRemember: false,
+            // isRemember: false,
             emptyHelp: ""
         };
     }
 
-     handleCheckbox(e){
-        let isChecked = e.target.checked;
-        if(isChecked){
-            this.setState({
-                isRemember: true
-            })
-        }else{
-            this.setState({
-                isRemember: false
-            })
-        }
-    }
+    //  handleCheckbox(e){
+    //     let isChecked = e.target.checked;
+    //     if(isChecked){
+    //         this.setState({
+    //             isRemember: true
+    //         })
+    //     }else{
+    //         this.setState({
+    //             isRemember: false
+    //         })
+    //     }
+    // }
     
 
     handleSubmit(){
-        // veridate not empty string 
+        // Verify empty string 
         if (this.state.username.trim().length === 0 || this.state.password.trim().length === 0){
             this.setState({emptyHelp:"* area can not be empty."})
             
@@ -36,19 +36,17 @@ export default class Login extends Component {
 
         this.setState({emptyHelp:""});
 
-        if(this.state.isRemember === true){ 
-                let loginData = {};
-                loginData.username = this.state.username;
-                loginData.userpassword = this.state.password;
-                localStorage.setItem("loginInfor",loginData);
-            }else{
-                localStorage.removeItem("deleteLoginInfor");
-            }
-  
-            // this.props.login(this.state.username,this.state.password);
-
-
-        // post request to server side 
+        // if(this.state.isRemember === true){ 
+        //         let loginData = {};
+        //         loginData.username = this.state.username;
+        //         loginData.userpassword = this.state.password;
+        //         localStorage.setItem("loginInfor",loginData);
+        //     }else{
+        //         localStorage.removeItem("deleteLoginInfor");
+        //     }
+        
+        
+        // Post request to server side 
         fetch('/login',{
             method:'post',
             body: JSON.stringify(this.state),
@@ -57,9 +55,8 @@ export default class Login extends Component {
         .then(response=>response.json())
         .then(responseJson => {
                
-            if(responseJson.err_code === 0){
-                 
-                // after log in successfully, set username to local storage
+            if(responseJson.err_code === 0){  
+                // after log in successfully, set username and user ID to local storage
                 localStorage.setItem("username", this.state.username.trim());
                 localStorage.setItem("userId", responseJson.userId);
                 window.location.href="/";
@@ -73,6 +70,8 @@ export default class Login extends Component {
         })
      }
     }
+
+
 
     render(){
         return(
@@ -101,12 +100,6 @@ export default class Login extends Component {
                             <span className="help-block">{this.state.emptyHelp}</span>
                         </div>
 
-                        <div className="checkbox">
-                            <label>
-                                <input type="checkbox" id="chk" checked={this.state.isRemember} onClick={this.handleCheckbox.bind(this)} onChange={evt => this.setState({})}/> Remember me?
-                            </label>
-                        </div>
-                        
 
                         <button type="button" className="btn btn-dark" style={{width: 200,height:40}} onClick={this.handleSubmit.bind(this)}>Login</button>
                        

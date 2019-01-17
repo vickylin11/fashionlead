@@ -10,6 +10,7 @@ export default class ProductsByDesigner extends Component {
             "products":[]
         }
     
+    // Get designer details 
     fetch('/designer/'+this.props.match.params.id,{
             method:'get',
             headers: {"Content-Type":"application/json"},
@@ -21,7 +22,8 @@ export default class ProductsByDesigner extends Component {
              	"designerDetails":responseJson[0]
              })
         })
-             
+    
+    // Get Products under a specific designer        
     fetch('/designerPro/'+this.props.match.params.id,{
             method:'get',
             headers: {"Content-Type":"application/json"},
@@ -36,6 +38,8 @@ export default class ProductsByDesigner extends Component {
 
     }
 
+
+    // List all products under a requested designer.
     listProductsByDesigner(){
     	let list = this.state.products.map((pro,index,array)=>{
       return(

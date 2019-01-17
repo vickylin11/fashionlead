@@ -26,6 +26,7 @@ router.post('/shoppingCart', function(req, res){
                          pro_id: req.body.proId,
                          pro_size: req.body.selectedSize
                      },function (err, result) {
+                      
                         if (err) {
                              return res.status(500).json({
                              err_code: 500,
@@ -53,11 +54,8 @@ router.post('/shoppingCart', function(req, res){
                                                 message: "Add to exist cart successfully."                             
                                                 })
 
-                                         })
-                                       
-                                     
+                                         })                
                                   }
-        
                           }else{
                              console.log(currentStock)
                              if (currentStock >= req.body.selectedQuan){
@@ -86,6 +84,7 @@ router.post('/shoppingCart', function(req, res){
               })
   })
 
+
 router.get('/cartList',function(req,res){
   console.log(req.session)
   
@@ -95,7 +94,7 @@ router.get('/cartList',function(req,res){
                 message: "Please login"
     });
   }
-    Cart.find(function (err, result) {
+    Cart.find({user_id:req.session.userid},function (err, result) {
              
             if (err) {
                 return res.status(500).json({
@@ -108,6 +107,7 @@ router.get('/cartList',function(req,res){
     })
    
 })
+
 
 router.delete('/removeItem/:id', function(req, res){
     console.log(req.params.id)
@@ -126,6 +126,7 @@ router.delete('/removeItem/:id', function(req, res){
             });
     });
 })
+
 
 router.put('/updateQuantity/:id', function(req, res){
     console.log(req.params.id)

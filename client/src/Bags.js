@@ -9,10 +9,10 @@ export default class Bags extends Component {
 render(){
         return(
 
-        <div> 
-        <h1> bags  </h1>
+        <center> 
+        <h1> Coming soon...  </h1>
 
-        </div>
+        </center>
 
         );
  }

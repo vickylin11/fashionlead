@@ -8,7 +8,8 @@ export default class Checkout extends Component {
         this.state={
         	"order": {}
         };
-
+        
+        // Get the current order list from database
         fetch('/orderList/'+this.props.match.params.id,{
             method:'get',
             headers: {"Content-Type":"application/json"},

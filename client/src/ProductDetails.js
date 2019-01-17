@@ -20,16 +20,11 @@ export default class ProductDetails extends Component {
             "selectedSize":'',
             "product": '',
             "stocks": [],
-            "pics": [],
-            "activeIndex": 0 
+            "pics": []
+          
         }; 
-        this.next = this.next.bind(this);
-        this.previous = this.previous.bind(this);
-        this.goToIndex = this.goToIndex.bind(this);
-        this.onExiting = this.onExiting.bind(this);
-        this.onExited = this.onExited.bind(this);
-        
-      console.log(this.state.selectedSize)
+    
+    // Get request with specific product id as parameter to get the corresponding product.    
     fetch('/productDetail/'+this.props.match.params.id,{
             method:'get',
             headers: {"Content-Type":"application/json"},
@@ -47,10 +42,15 @@ export default class ProductDetails extends Component {
         })
      
     }
+
+
+    
     handleSubmit(){
+      // Make sure user logs in before adding product to cart. 
       if (localStorage.username.trim().length === 0){
         alert("Please login before you shop.");
       }
+      // Post request of the selected items
       else{
         fetch('/shoppingCart',{
             method:'post',
@@ -71,75 +71,14 @@ export default class ProductDetails extends Component {
             }else if(responseJson.err_code === 2){
                     alert(responseJson.message);
                     
-                }
-            
+                }   
 
         })
 
     }}
-    
-    
-  onExiting() {
-    this.animating = true;
-  }
-
-  onExited() {
-    this.animating = false;
-  }
-
-  next() {
-    console.log(this.state.pics)
-    if (this.animating) return;
-    const nextIndex = this.state.activeIndex === this.state.pics.length - 1 ? 0 : this.state.activeIndex + 1;
-    this.setState({ activeIndex: nextIndex });
-  }
-
-  previous() {
-
-    if (this.animating) return;
-    const nextIndex = this.state.activeIndex === 0 ? this.state.pics.length - 1 : this.state.activeIndex - 1;
-    this.setState({ activeIndex: nextIndex });
-  }
-
-  goToIndex(newIndex) {
-    if (this.animating) return;
-    this.setState({ activeIndex: newIndex });
-  }
-
-  carousel(){
-   
-  const { activeIndex } = this.state;
-
-    const slides = this.state.pics.map((item,index) => {
-      return (
-        <CarouselItem
-          onExiting={this.onExiting}
-          onExited={this.onExited}
-          key={index}
-        >
-          <img src={item[index]} />
-          
-        </CarouselItem>
-      );
-    });
-
-    return (
-      <Carousel
-        activeIndex={activeIndex}
-        next={this.next}
-        previous={this.previous}
-      >
-        <CarouselIndicators items={this.state.pics} activeIndex={activeIndex} onClickHandler={this.goToIndex} />
-        {slides}
-        <CarouselControl direction="prev" directionText="Previous" onClickHandler={this.previous} />
-        <CarouselControl direction="next" directionText="Next" onClickHandler={this.next} />
-      </Carousel>
-    );
-  
-  }
 
 
-
+    // List different sizes of one product. 
     listSize(){
     	
     	var sizeList = this.state.stocks.map((stock,index,array)=>{
@@ -151,23 +90,18 @@ export default class ProductDetails extends Component {
     	return sizeList
     }
 
-
-    	
-   
-
-    
-
     
 
 render(){
        
    
        return(
-       <div>
+       <div className="row">
        
-       <div>
-        
-       </div>
+        <div className="col">
+        <img style={{height:400,width:400}} src={this.state.pics[0]} alt="product image" />
+        </div>
+
         <div style={{width: 500}} className="float-right"> 
         <h2> {this.state.product.p_name} </h2>
         <p> {this.state.product.p_describ} </p>
@@ -176,13 +110,11 @@ render(){
         <div>
         <FormGroup>
           <Label for="exampleSelect">Size:</Label>
-
           <Input type="select" name="size" id="size" style={{width: 100,height:40}} 
                  onChange={evt => this.setState({"selectedSize":evt.target.value})}>
-              {this.listSize()}
-            
+              {this.listSize()}  
           </Input>
-         </FormGroup>
+        </FormGroup>
         
 
         <FormGroup>
@@ -202,7 +134,7 @@ render(){
         <button type="button" className="btn btn-dark" style={{width: 200,height:40}} onClick={this.handleSubmit.bind(this)}>Add to Shopping Cart</button>
         </div>
 
-    </div>
+      </div>
         );
  }
 

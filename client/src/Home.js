@@ -28,7 +28,7 @@ const items = [
   ]
     
 
-
+// Utilize Reactstrap Carousel to display the images in home page. 
 export default class Home extends Component {
 
    constructor(props) {

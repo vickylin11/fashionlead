@@ -13,6 +13,7 @@ export default class Shoppingcart extends Component {
         	"checkedItems": []
 
         };
+    // Get request to get the cart list of a specific user.     
     fetch('/cartList',{
             method:'get',
             headers: {"Content-Type":"application/json"},
@@ -20,6 +21,7 @@ export default class Shoppingcart extends Component {
         .then(response=>response.json())
         .then(responseJson => {
         if(responseJson.err_code ==1){
+          // If user does not log in, redirect to Login page. 
         	window.location.href = "./Login";
         }
         this.setState({
@@ -31,28 +33,26 @@ export default class Shoppingcart extends Component {
     }
     
 
-    
-    
-
+    // Handle increase in quantity of a specific item in cart. 
     increaseQuan(index){
     	
     	var currentQuan = this.state.cartProducts[index].pro_quan + 1;
     	var currentCartProducts = this.state.cartProducts;
     	currentCartProducts[index].pro_quan = currentQuan;
-    	console.log(currentQuan);
     	this.setState({
     		cartProducts: currentCartProducts
     	})
-    	console.log(this.state.quan)
     	this.handleQuanChange(index)
     }
 
+
+    // Handle decrease in quantity of a specific item in cart. 
     decreaseQuan(index){
     	var currentCartProducts = this.state.cartProducts
     	var currentQuan = currentCartProducts[index].pro_quan - 1;
-    	if (currentQuan < 1 ){
-           alert ("The minimum quantity is 1");
-           
+    	// Make sure quantity is not less than 1. 
+      if (currentQuan < 1 ){
+           alert ("The minimum quantity is 1");     
         }else{
             currentCartProducts[index].pro_quan = currentQuan;
             this.setState({
@@ -62,6 +62,24 @@ export default class Shoppingcart extends Component {
         }
     }
     
+    
+    // Put request to update quantity change in database. 
+    handleQuanChange(index){
+    	console.log(this.state)
+    	var quan = {"pro_quan":this.state.cartProducts[index].pro_quan};
+        fetch('/updateQuantity/'+this.state.cartProducts[index]._id,{
+            method:'put',
+            body: JSON.stringify(quan),
+            headers: {"Content-Type":"application/json"}
+        })
+        .then(response=>response.json())
+        .then(responseJson => {
+            
+        })
+    }
+
+
+    //Handel item removed from cart and delete corresponding item in database. 
     handleRemove(index){
         console.log(index);
         var cart_id = this.state.cartProducts[index]._id
@@ -77,21 +95,9 @@ export default class Shoppingcart extends Component {
         })
         } 
     }
-   
-    handleQuanChange(index){
-    	console.log(this.state)
-    	var quan = {"pro_quan":this.state.cartProducts[index].pro_quan};
-        fetch('/updateQuantity/'+this.state.cartProducts[index]._id,{
-            method:'put',
-            body: JSON.stringify(quan),
-            headers: {"Content-Type":"application/json"}
-        })
-        .then(response=>response.json())
-        .then(responseJson => {
-            //window.location.href="/Shoppingcart";
-        })
-    }
 
+
+    // Calculate the total price of cart products. 
     caculateTotal(){
        var total = this.state.total;
        var i;
@@ -104,30 +110,33 @@ export default class Shoppingcart extends Component {
     }
     
 
-   handleCheckbox(index){
-   	  
+   // Handle checkbox. 
+    handleCheckbox(index){
+      // Create an array called checkedItems to store index of checked cart products.   
    	  var cartIndex = this.state.checkedItems.indexOf(index);
    	  var originalCheckItems = this.state.checkedItems;
-
+      // If cart index already existed in the array, take it off when checkbox is clicked. 
    	  if(cartIndex>-1){
    	  	originalCheckItems.splice(cartIndex,1);
    	  	this.setState({checkedItems:originalCheckItems});
    	  }else{
+       // If cart index is not existed in the array, put it into the array when checkbox is clicked.    
    	  	originalCheckItems.unshift(index)
    	  	this.setState({checkedItems:originalCheckItems})
    	  }
-      console.log(this.state.checkedItems);
-   }
 
-    handleCheckout(){
+    }
+
+
+    
+    handleCheckout(){    
     	var i;
     	var items = [];
     	var checkedProTotal = 0;
     	var userid = this.state.cartProducts[0].user_id;
     	var date = new Date();
     	var carts = [];
-    	console.log(this.state.checkedItems)
-    	console.log(this.state.cartProducts)
+        // If there is index in the array of checkedItems, it means there is item checked, then get the details of the checked item. 
         for(i=0; i < this.state.checkedItems.length; i ++){
 
             var cartProduct = this.state.cartProducts[this.state.checkedItems[i]];
@@ -145,6 +154,8 @@ export default class Shoppingcart extends Component {
             console.log(cartProduct)
             checkedProTotal += items[i].pro_price;
         }
+
+        // Organize the order details which is going to store in database. 
         var order={
         	user_id: userid,
         	order_date: date,
@@ -152,6 +163,10 @@ export default class Shoppingcart extends Component {
         	order_total: checkedProTotal,
         	cart_ids : carts
         }
+        // Make sure checkout items are checked. 
+         if(this.state.checkedItems.length == 0){
+        alert("Please select your checkout item.");
+      } else {
         fetch('/order',{
             method:'post',
             body: JSON.stringify(order),
@@ -160,15 +175,15 @@ export default class Shoppingcart extends Component {
         .then(response=>response.json())
         .then(responseJson => {
                
-            if(responseJson.err_code === 0){
-                 
+            if(responseJson.err_code === 0){               
                 window.location.href="/Checkout/"+responseJson.orderId;
             }
-           
-
         })
+      }  
     }
     
+
+
     showCartProducts(){
     	let cartProducts = this.state.cartProducts.map((cartPro,index,array)=>{
     		
@@ -230,7 +245,6 @@ export default class Shoppingcart extends Component {
     return cartProducts
     }
     
-
 
 
 render(){

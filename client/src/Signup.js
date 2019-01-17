@@ -15,9 +15,12 @@ export default class Signup extends Component {
             "pwHelp":""
         };
     }
-    
+ 
+
+    // Use AJAX to check whether username is unique or not.    
     checkUsername() {
     var username = this.state.username;
+    // Examine empty string. 
     if (username.trim().length == 0){
         this.setState(
                 {unameHelp:'Username cannot be empty'}
@@ -30,15 +33,19 @@ export default class Signup extends Component {
         })
         .then(response=>response.json())
         .then(data => {
+            // If username is used, show the message in unameHelp state. 
             if(data.err_code == 1){
             this.setState({unameHelp:data.message})
         }else{
+            // If usernmae is verified, set unameHelp to empty. 
             this.setState({unameHelp:''})
         }
         }); 
 
     }
 
+
+    //Verify emial address. 
     checkEmail(){
     var email = this.state.email;
     var emailReg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
@@ -56,6 +63,8 @@ export default class Signup extends Component {
     }
     }
 
+
+    // Verify password.
     checkPw(){
     var pw = this.state.password;
     if (pw.trim().length == 0){
@@ -71,8 +80,7 @@ export default class Signup extends Component {
             
              
 
-    handleSubmit(){
-        
+    handleSubmit(){   
         // post request to server side     
         fetch('/signup',{
             method:'post',
@@ -117,32 +125,34 @@ export default class Signup extends Component {
                             <input type="email" className="form-control" id="email" name="email" style={{width: 300,height:40}} placeholder="Please enter an email"
                                    onChange={evt => this.setState({"email":evt.target.value})} onBlur={this.checkEmail.bind(this)}/>
                             <span className="help-block">{this.state.emailHelp}</span>
-                            {/*//set the changes of email to state*/}
                         </div>
+
                         <div className="form-group">
                             <label htmlFor="username">Username: <span style={{color:"red"}}>* </span> </label>
                             <input type="text" className="form-control" id="username" name="username" style={{width: 300,height:40}}
                                    placeholder="Please enter a username" onChange={evt => this.setState({"username":evt.target.value})} onBlur={this.checkUsername.bind(this)}/>
                             <span className="help-block">{this.state.unameHelp}</span>
                         </div>
+
                         <div className="form-group">
                             <label htmlFor="password">Password: <span style={{color:"red"}}>* </span> </label>
                             <input type="password" className="form-control" id="password" name="password" style={{width: 300,height:40}}
                                    placeholder="Please enter a password" onChange={evt => this.setState({"password":evt.target.value})} onBlur={this.checkPw.bind(this)}/>
-                            <span className="help-block">{this.state.pwHelp}</span>
-                                   {/*//set changes of password to state*/}
-                        </div><div className="form-group">
+                            <span className="help-block">{this.state.pwHelp}</span>           
+                        </div>
+
+                        <div className="form-group">
                             <label htmlFor="address">Address:  </label>
                             <input type="text" className="form-control" id="address" name="address" style={{width: 300,height:40}}
-                                   placeholder="Please enter your address" onChange={evt => this.setState({"address":evt.target.value})}/>
-                                   
+                                   placeholder="Please enter your address" onChange={evt => this.setState({"address":evt.target.value})}/>        
                         </div>
 
                         <button type="button" className="btn btn-dark" style={{width: 200,height:40}} onClick={this.handleSubmit.bind(this)}>Sign up</button>
                         </form>
+
                         <div className="message">
                         <p>Already Sign Up? <a href="/Login">Sign In here</a>.</p>
-                    </div>
+                        </div>
                 </div>
             </div>
         );

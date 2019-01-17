@@ -30,14 +30,11 @@ router.get('/checkUname/:username',function(req, res){
                 })
             }
     })
-
-
 })
 
 
 router.post('/signup', function(req, res){
-    // get request params
-    //var user = new User(req.body)
+ 
     console.log(req.body)
     var user = new User();
     
@@ -76,12 +73,27 @@ router.post('/signup', function(req, res){
                     message: 'signup success',
                     userId: user._id
                 })
-            })
-            
+            })   
            
         }
     })
 })
+
+
+router.get('/checkLogin',function(req,res){
+    if(!req.session.userid){
+         return res.status(200).json({
+                err_code: 1,
+                message: "Please login"
+    });
+    }else{
+        return res.status(200).json({
+                err_code: 0,
+                message: "Log in successfully."
+        })
+    }
+})
+
 
 router.post('/login', function(req, res){
     //get request params
@@ -107,7 +119,6 @@ router.post('/login', function(req, res){
                 })
             }
             req.session.regenerate(function(err){
-                    //req.session.userInfo = user.u_name;
                     req.session.userid = user._id;
                     console.log(req.session);
                      //console.log(req.session)
@@ -119,14 +130,11 @@ router.post('/login', function(req, res){
             })
            
               console.log(user);
-                //     res.status(200).json({
-                //         err_code: 0,
-                //     message: 'login success',
-                //     userId: user._id
-                // })
+              
         }
         )
  }) 
+
 
  router.delete('/clearSession',function (req,res) {
     req.session.destroy(function(err) {

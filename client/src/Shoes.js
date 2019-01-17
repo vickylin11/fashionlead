@@ -18,8 +18,7 @@ export default class Shoes extends Component {
         }; 
         
    
-        
-
+        // Get all shoes from databse. 
         fetch('/api/shoes',{
             method:'get',
             headers: {"Content-Type":"application/json"},
@@ -34,12 +33,16 @@ export default class Shoes extends Component {
         })
     }
 
+
+    // Handle toggle drop. 
     toggle() {
     this.setState(prevState => ({
       dropdownOpen: !prevState.dropdownOpen
     }));
   }
 
+
+    //Sorting prices by ascending order. 
     sortByPriceAsc() {
     this.setState(prevState => {
       this.state.allshoes.sort((a, b) => (a.p_price - b.p_price));
@@ -47,7 +50,9 @@ export default class Shoes extends Component {
   });
     
   }
+    
 
+    // Sorting prices by descending order. 
     sortByPriceDesc() {
     this.setState(prevState => {
       this.state.allshoes.sort((a, b) => (b.p_price - a.p_price));
@@ -55,16 +60,15 @@ export default class Shoes extends Component {
   });
   }
 
-    filterList(){
-    
+
+    // List products with keyword filtering function. The keywords including product names and product descriptions.  
+    filterList(){ 
     let updatedList = this.state.allshoes.filter((shoes)=>{
       return shoes.p_name.toLowerCase().indexOf(this.state.search.toLowerCase())!== -1 
       || shoes.p_describ.toLowerCase().indexOf(this.state.search.toLowerCase())!== -1
     })
     let shoeslist = updatedList.map((shoes,index,array)=>{
-      return(
-    
-         
+      return(     
     <div style={{float :'left',border:2}} key={index}>
       <Card style={{height:350,width:300}}>
       <a href={"/ProductDetails/"+shoes._id}>
@@ -82,10 +86,11 @@ export default class Shoes extends Component {
     </div>
       
           );
-
     })
     return shoeslist
   }
+
+
 
 render(){
   

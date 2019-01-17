@@ -8,7 +8,7 @@ export default class Designers extends Component {
             "alldesigners": []
         }
 
-
+    // Get designer from database 
     fetch('/alldesigners',{
             method:'get',
             headers: {"Content-Type":"application/json"},
@@ -25,7 +25,7 @@ export default class Designers extends Component {
     }
     
     listDesigners(){
-
+      // List designers in alphabetical order
     	let sortDesigners = this.state.alldesigners.sort(function(a,b){
 
           var desA = a.d_name.toUpperCase();
@@ -33,17 +33,15 @@ export default class Designers extends Component {
       
            if (desA < desB) {return -1;}
           
-
     	})
      
     	let designerList = sortDesigners.map((designer,index,array)=>{
       return(
       	<a className="text-dark" href={"/ProductsByDesigner/"+designer._id}>
-      	<div key={index}> {designer.d_name}</div>
+      	<center key={index}> {designer.d_name}</center>
       	</a>
       	);	
-    })
-      
+    }) 
         return designerList
 
      }

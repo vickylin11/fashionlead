@@ -17,6 +17,7 @@ router.get('/alldesigners', function(req, res){
     })
 })
 
+
 router.get('/designer/:id',function(req, res){
    
     var d_id = req.params.id;
