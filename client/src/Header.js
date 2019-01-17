@@ -27,7 +27,6 @@ export default class Header extends Component {
           "username": ""
         }
         console.log(localStorage);
-        console.log(this.state);
         //Check whether user logs in
         fetch('checkLogin',{
           method: 'get',
@@ -60,7 +59,7 @@ export default class Header extends Component {
 
    // Only user who logs in can view his shoppingcart.
    handleShoppingCart(){
-    if (localStorage.username.trim().length === 0){
+    if (this.state.username.trim().length === 0){
         alert("Please login to browse your shopping cart.");
       }else{
         window.location.href="/Shoppingcart";
