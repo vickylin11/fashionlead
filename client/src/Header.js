@@ -41,7 +41,7 @@ export default class Header extends Component {
             this.setState({
                 // if user has loggin in, set username to State
                 "isLoggedin": true,
-                "username": "Welcome,"+localStorage.username
+                "username": "Hi,"+localStorage.username
               }) 
               console.log(this.state);
             }else{
