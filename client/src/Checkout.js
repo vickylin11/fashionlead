@@ -6,10 +6,13 @@ export default class Checkout extends Component {
     constructor(props) {
         super(props);
         this.state={
-        	"order": {}
+        	"order": {},
+          "order_items" : []
         };
+
+   }
         
-        // Get the current order list from database
+     componentWillMount() {
         fetch('/orderList/'+this.props.match.params.id,{
             method:'get',
             headers: {"Content-Type":"application/json"},
@@ -18,27 +21,30 @@ export default class Checkout extends Component {
         .then(responseJson => {
              console.log(responseJson);
              this.setState({
-             	"order":responseJson    
+              "order":responseJson[0],
+              "order_items" : responseJson[0]['order_items']  
              })
         })
-     }
-
-        showOrder(){
-
-      //   <Table bordered>
+     }   
         
-      //   <tbody>
-      //     <tr>
-      //       <th scope="row">1</th>
-      //       <td>pro_pic</td>
-      //       <td>pro_name</td>
-      //       <td>pro_size</td>
-      //       <td> pro_quan </td>
-      //       <td> pro_price </td>
-      //     </tr>
+
+        showOrderedProducts(){
+         
+         let orderedProducts= this.state.order_items.map((orderedPro,index,arr)=>{
+             
+             return(
+                      <tr>
+                        <td><img style={{height:80,width:80}} src={orderedPro.pro_pic} alt= "product img" /></td>
+                        <td>{orderedPro.pro_name}</td>
+                        <td>Size: {orderedPro.pro_size}</td>
+                        <td>Quan: {orderedPro.pro_quan} </td>
+                        <td>Sub: ${orderedPro.pro_price} </td>
+                      </tr>    
+             
+              );
           
-      //   </tbody>
-      // </Table>
+         })
+          return orderedProducts
       }
 
      render(){
@@ -47,7 +53,13 @@ export default class Checkout extends Component {
         <center>
             <h1>Thank you for your order!</h1>
         </center>
-        {this.showOrder()}
+        <p> Order date: {this.state.order.order_date} </p>
+        <Table bordered>
+          <tbody>
+        {this.showOrderedProducts()}
+          </tbody>
+        </Table>
+        <h5 style={{textAlign: 'right'}}> Order Total: ${this.state.order.order_total} </h5> 
         </div>
         );
 

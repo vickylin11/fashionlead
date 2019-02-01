@@ -18,7 +18,6 @@ router.get('/checkUname/:username',function(req, res){
                 })
             }
             if (result) {
-                console.log(result)
                 return res.status(200).json({
                     err_code: 1,
                     message: 'Username existed, please change to another username.'
@@ -34,15 +33,14 @@ router.get('/checkUname/:username',function(req, res){
 
 
 router.post('/signup', function(req, res){
- 
-    console.log(req.body)
+
     var user = new User();
     
     user.u_name = req.body.username;
     user.u_pw = req.body.password;
     user.u_address = req.body.address;
     user.u_email = req.body.email;
-    
+    // Use md5 to encrypt password before store into database.
     user.u_pw = md5(md5(user.u_pw))
   
     User.findOne({
@@ -55,23 +53,21 @@ router.post('/signup', function(req, res){
                 })
             }
             if (result) {
-                console.log(result)
                 return res.status(200).json({
                     err_code: 1,
                     message: 'Username existed, please change to another username.'
                 })
             }else{
-            user.save()
+                 user.save()
             
-              req.session.regenerate(function(err){
-                    //req.session.userInfo = user.u_name;
+                 req.session.regenerate(function(err){
+                    req.session.uname = user.u_name;
                     req.session.userid = user._id;
-                    console.log(req.session);
-                     //console.log(req.session)
-                    res.status(200).json({
-                        err_code: 0,
-                    message: 'signup success',
-                    userId: user._id
+                   
+                       res.status(200).json({
+                         err_code: 0,
+                         message: 'signup success',
+                         userId: user._id
                 })
             })   
            
@@ -120,16 +116,13 @@ router.post('/login', function(req, res){
             }
             req.session.regenerate(function(err){
                     req.session.userid = user._id;
-                    console.log(req.session);
-                     //console.log(req.session)
+                    req.session.uname = user.u_name;
                     res.status(200).json({
                         err_code: 0,
-                    message: 'login success',
-                    userId: user._id
+                        message: 'login success',
+                        userId: user._id
                 })
             })
-           
-              console.log(user);
               
         }
         )

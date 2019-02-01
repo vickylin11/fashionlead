@@ -8,6 +8,7 @@ export default class Shoppingcart extends Component {
         super(props);
         this.state = {
         	"cartProducts": [],
+          "stockAvailable": " ",
         	"subtotal": " ",
         	"total" : 0,
         	"checkedItems": []
@@ -43,6 +44,7 @@ export default class Shoppingcart extends Component {
     		cartProducts: currentCartProducts
     	})
     	this.handleQuanChange(index)
+     
     }
 
 
@@ -65,7 +67,7 @@ export default class Shoppingcart extends Component {
     
     // Put request to update quantity change in database. 
     handleQuanChange(index){
-    	console.log(this.state)
+    	
     	var quan = {"pro_quan":this.state.cartProducts[index].pro_quan};
         fetch('/updateQuantity/'+this.state.cartProducts[index]._id,{
             method:'put',
@@ -74,7 +76,9 @@ export default class Shoppingcart extends Component {
         })
         .then(response=>response.json())
         .then(responseJson => {
-            
+            if(responseJson.err_code ==1){
+               alert (responseJson.message);
+            }
         })
     }
 
@@ -150,8 +154,7 @@ export default class Shoppingcart extends Component {
             };
             items[i] = item;
             carts[i] = cartProduct._id;
-            console.log(items)
-            console.log(cartProduct)
+           
             checkedProTotal += items[i].pro_price;
         }
 

@@ -18,7 +18,7 @@ router.post('/shoppingCart', function(req, res){
                         if(req.body.selectedSize == p_stock[i].size){
                            currentStock = p_stock[i].quantity    
                         }
-                        console.log(currentStock)
+                        
                       }
                       
                     Cart.find({
@@ -37,8 +37,7 @@ router.post('/shoppingCart', function(req, res){
                         if (result.length > 0) {
                              
                              var purchaseQuan = result[0].pro_quan + Number(req.body.selectedQuan);
-                             console.log("hh"+purchaseQuan);
-                             console.log("cartquan"+result[0].pro_quan);
+                             
                                  if (currentStock < purchaseQuan){
                                       return res.status(200).json({
                                              err_code: 1,
@@ -57,7 +56,7 @@ router.post('/shoppingCart', function(req, res){
                                          })                
                                   }
                           }else{
-                             console.log(currentStock)
+                            
                              if (currentStock >= req.body.selectedQuan){
                                   cart.user_id = req.body.userId;
                                   cart.pro_id = req.body.proId;
@@ -86,8 +85,7 @@ router.post('/shoppingCart', function(req, res){
 
 
 router.get('/cartList',function(req,res){
-  console.log(req.session)
-  
+
   if(!req.session.userid){
     return res.status(200).json({
                 err_code: 1,
@@ -110,7 +108,7 @@ router.get('/cartList',function(req,res){
 
 
 router.delete('/removeItem/:id', function(req, res){
-    console.log(req.params.id)
+
     Cart.findOneAndDelete({_id: req.params.id}).then (function (err, result) {
              
             if (err) {
@@ -129,16 +127,51 @@ router.delete('/removeItem/:id', function(req, res){
 
 
 router.put('/updateQuantity/:id', function(req, res){
-    console.log(req.params.id)
-    console.log(req.body)
+ 
+    Cart.find({_id:req.params.id},function(err,result){
+       if (err){
+           return res.status(500).json({
+                    err_code: 500,
+                    message: err.message
+                })
+       }
+       if (result){
+         
+         Product.find({
+           _id: result[0].pro_id
+         },function(err,pro){
+              if (pro){
+            
+              var stockAvailable;
+              for(var i in pro[0].p_stock){
+              
+                if(result[0].pro_size == pro[0].p_stock[i].size){
+                  stockAvailable = pro[0].p_stock[i].quantity
+                }
+              }
+              
+                if (stockAvailable >= req.body.pro_quan){
+                    Cart.findOneAndUpdate({_id: req.params.id},req.body).then(function (result) {
 
-    Cart.findOneAndUpdate({_id: req.params.id},req.body).then(function (result) {
+                       res.status(200).json({
+                       err_code: 0,
+                       message: "You have updated the quantity successfully."
+                          });
+                    });
+                }else{
+                       res.status(200).json({
+                        err_code: 1,
+                        message: "Sorry! There is not enough stock for your required quantity.",
+                        stockAvail: stockAvailable
+                       })
+                }
 
-            res.status(200).json({
-                err_code: 0,
-                message: "You have updated the quantity successfully."
-            });
-    });
+            }
+         })
+      
+       }
+    })
+
 })
 
 module.exports = router;

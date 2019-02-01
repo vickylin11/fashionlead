@@ -7,7 +7,8 @@ var router = express.Router();
 router.post('/order', function(req, res){
 
    var order = new Order(req.body)
-   order.save()
+   order.save() //Save the checkout items to the table of ORDER.
+     //Delete the checkout items in the table of CART. 
      for(var i=0;i<req.body.cart_ids.length;i++){
      	Cart.findOneAndDelete({_id: req.body.cart_ids[i]}).then (function (err, result) {
              
@@ -34,6 +35,8 @@ router.post('/order', function(req, res){
 
 
 router.get('/orderList/:id', function(req,res){
+
+    console.log(req.session);
      Order.find({
         _id: req.params.id,
     },function (err, result) {

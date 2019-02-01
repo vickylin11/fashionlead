@@ -26,32 +26,28 @@ export default class Header extends Component {
           "isLoggedin": false,
           "username": ""
         }
-        console.log(localStorage);
         //Check whether user logs in
-        fetch('checkLogin',{
+        fetch('/checkLogin',{
           method: 'get',
           headers: {"Content-Type":"application/json"}
         })
         .then(response=>response.json())
         .then(responseJson=>{
-          console.log(responseJson)
-
+            
           if (responseJson.err_code == 0){
             this.setState({
                 // if user has loggin in, set username to State
                 "isLoggedin": true,
                 "username": "Hi,"+localStorage.username
               }) 
-              console.log(this.state);
             }else{
             this.setState({
                 //if user has not logged in, set username to empty
                 "isLoggedin": false,
                 "username": ""
               }) 
-              console.log(this.state);
+          
             }
-            console.log(this.state)
         })
 
      }

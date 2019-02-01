@@ -31,7 +31,7 @@ export default class ProductDetails extends Component {
         })
         .then(response=>response.json())
         .then(responseJson => {
-             console.log(responseJson);
+            
              this.setState({
              	"product":responseJson[0],
              	"stocks": responseJson[0].p_stock,
